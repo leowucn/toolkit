@@ -1,4 +1,0 @@
-id	name	avatar	liiimit_hei	limit_wu	from_channels	hello_channels	example_channel	x;y;z
-int	string	int	intarray2	intarray	array~channel_type$short~map_id;int~x;int~y	array~channel_type$	array~channel_type$	byte;int;int
-10001	大地图	10001	1_2_3;4_5_6	1_60	100_10003_2324;23_10004_239	2_10006_73;43_10007_77	3_10023_23;43_238_2389	1_2_3
-10002	小地图	10002	7_8_9;2_34_9	2_23	23_10004_239	478_278_12	34_894_2734	0
