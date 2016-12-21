@@ -1,0 +1,3 @@
+	id	scene_id	coordinates_x	coordinates_y	type	data_a	data_b
+	100011	10001	20	50	2	20	100
+	100012	10001	100	100	1	360	50

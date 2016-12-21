@@ -1,0 +1,5 @@
+	id	type	xycoordinate_angle	track_type	track_id	radius	speed	end_angle	track_time	back_time	collision
+	2000111	1	90	1	0	0	10	0	200	0	0
+	2000131	1	0	2	2000131	0	10	0	200	0	0
+	2000141	1	0	2	2000141	0	10	0	200	0	0
+	2000241	2	90	1	0	0	10	0	200	0	0

@@ -1,0 +1,5 @@
+	id	name	file	type	limit_type	limit_data	horse_limit	limit_area_into	coordinates_x	coordinates_y	music_id	create_type	waypoint_id
+	10001	大地图	10001	1	1	60	0	100011_100012	10	20	100010_100011_100012	0	10001_10002_10003
+	20001	组队地图	20001	3	0	0	0	0	20	50	0	0	10001
+	1001	测试地图	zhanzhengqianxian	1	0	0	0	0	40	39	0	0	1_2
+	1002	测试地图2	bailihaizhan	1	0	0	0	0	40	39	0	0	3_4
