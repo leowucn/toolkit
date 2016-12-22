@@ -1,0 +1,76 @@
+syntax="proto3";
+package battle;
+import "share.proto";
+
+
+	////////////////////////////////////////////////
+	//战斗[0x0900,0x0aff]战斗中只能发送战斗相关消息
+	////////////////////////////////////////////////
+	
+	//战斗消息范围,用于服务器判定
+enum BATTLE_CMD_VAL
+{
+	DEF=0;
+	MIN = 0x0900;//战斗消息最小值
+	MAX = 0x0aff;//战斗消息最大值
+}
+
+	
+message battle_pve_in//1,0x0901#pve开始战斗
+{
+}
+
+message battle_pve_in_r
+{
+}
+
+message notify_battle_pve_end//0,0x0902#pve战斗结束
+{
+}
+
+message notify_battle_pve_end_r
+{
+	uint64 win_uid = 1;//赢的用户id
+}
+
+message use_anger//1,0x0903#使用怒气
+{
+	uint32 hero_idx = 1;//英雄序号
+}
+
+message use_anger_r
+{
+}
+
+//战斗中的消息
+message notify_battle_init_data//0,0x0a00#战斗初始化信息
+{
+}
+
+message notify_battle_init_data_r
+{
+	uint64 time = 1;//时间
+	share.battle_user_data_t ack = 2;//攻击方
+	share.battle_user_data_t def = 3;//防守方
+}
+
+message notify_battle_event//0,0x0a01#通知战斗事件
+{
+}
+
+message notify_battle_event_r
+{
+	uint64 time = 1;//时间
+	repeated share.battle_event_t battle_event = 2;//战斗事件
+}
+
+//
+//
+//message btl_server_offline_msg//0,0x0903#通知战斗服务器离线(玩家需要重新进入地图)
+//{
+//}
+//
+//message btl_server_offline_msg_res
+//{
+//}
+

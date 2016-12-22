@@ -1,0 +1,50 @@
+syntax = "proto3";
+package scene;
+
+import "share.proto";
+
+
+	////////////////////////////////////////////////
+	//地图[0x0200,0x02ff]
+	////////////////////////////////////////////////
+message enter_map//1,0x0201#进入地图
+{
+	uint32 map_id = 1;//没有在任何地图时,使用地图ID
+	uint32 way_point_id = 2;//通道ID
+}
+
+message enter_map_r
+{
+	uint32 map_id = 1;//没有在任何地图时,使用地图ID
+	repeated share.user_scene_data_t data = 2;
+}
+
+message move//1,0x0202#地图行走
+{
+	uint32 x = 1;
+	uint32 y = 2;
+}
+message move_r//不通知给自己
+{
+	fixed64 uid = 1;
+	uint32 x = 2;
+	uint32 y = 3;
+}
+
+message notify_map_out//0,0x0203#地图用户离开
+{
+}
+
+message notify_map_out_r
+{
+	fixed64 uid = 1; //用户ID
+}
+
+message notify_map_in//0,0x0204#地图用户进入
+{
+}
+
+message notify_map_in_r
+{
+	share.user_scene_data_t data = 1;
+}

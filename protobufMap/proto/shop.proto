@@ -1,0 +1,62 @@
+ syntax = "proto3";
+package shop;
+
+////////////////////////////////////////////////
+//商城[0x0600,0x06ff]
+//////////////////////////////////////////////// 
+message get_ad//1,0x0600#显示商城广告位
+{
+}
+
+message get_ad_r
+{
+	repeated ad_t ad= 1;    //商品id
+}
+enum ADVERTISEMENT_TYPE
+{
+	DUMB_SYMBLE=0;
+	AD_FIXED=1; //固定广告
+	AD_RANDOM=2; //随机广告
+	AD_ACTIVITY=3; //活动广告
+}
+message ad_t
+{
+	ADVERTISEMENT_TYPE ad_type=1; //广告类型
+	repeated uint32 shop_id = 2;    //商品id
+}
+//--------------
+message get_record//1,0x601#查看消费记录
+{
+    uint32 record_type = 1;  //消费类别
+}
+
+message get_record_r
+{
+	repeated buy_goods_info_t goods_info_list = 1;  	//玩家消费指定类别商品的所有记录
+}
+
+message buy_goods_info_t
+{
+	uint32 shop_index = 1;  //商店索引
+	uint32 timestamp = 2; //购买时间
+	uint32 amount = 3;    //购买数量
+	uint32 money_num = 4; //货币总额
+	MONEY_TYPE money_type = 5; //货币类型
+}
+//--------------
+enum MONEY_TYPE
+{
+	DIAMOND_TYPE=0; //钻石类型
+	COIN_TYPE=1; //钱币类型
+}
+message buy_goods//1,0x602#购买商品
+{
+	uint32 shop_index = 1; //商品索引
+	uint32 amount = 2; //购买数量
+	MONEY_TYPE money_type = 3; //货币类别
+	uint32 money_num = 4;   //货币总额
+}
+
+message buy_goods_r
+{
+}

@@ -1,0 +1,204 @@
+syntax = "proto3";
+
+package share;
+
+
+////////////////////////////////////////////////
+//通用消息[0x0000,0x00ff]
+////////////////////////////////////////////////
+message err_r//0,0x0001#错误消息
+{
+	 ERROR_CODE error_code = 1;//错误码
+	 uint32 cmd = 2;//引发错误的命令号
+}
+
+message heartbeat//1,0x0002#心跳
+{
+}
+
+message heartbeat_r
+{
+}
+
+enum ERROR_CODE
+{
+	SUCCESS 				= 0;//成功
+	ERR_CODE 				= 1;//错误
+	VALUE_INVALID 			= 2;//无效数值
+	LOGIN_T 				= 3;//被登陆上来的用户T掉
+	INEXISTENT_ITEM 		= 4;//不存在,道具
+	INEXISTENT_USER 		= 5;//不存在,用户
+	EXISTENT_ROLE 			= 6;//存在,角色
+	INEXISTENT_ACCOUNT 		= 7;//不存在,帐号
+	NO_APPROVED 			= 8;//尚未通过身份校验
+	EVENT_LIMIT 			= 9;//事件上限
+	USER_LEVEL 				= 10;//用户等级不足
+	USER_BTL 				= 11;//用户在战斗状态
+	USER_IN_CURRENT_MAP 	= 12;//用户在当前地图
+	MAP_INVALID 			= 13;//地图无效
+	PASSWORD 				= 14; //密码错误
+	CHAT_LEN_MAX 			= 15; //聊天长度上限
+	WRONG_SHOP_INDEX 		= 16; //错误的商店索引
+	EXCEL_ERROR 			= 17; //配置表错误
+	BUY_TIMES_UP_TO_LIMIT   = 18; //购买次数达到上限
+	WRONG_MONEY_TYPE        = 19; //错误的货币类型
+}
+
+//通用值
+enum COMMON_VAL
+{
+//	option allow_alias = true;
+	COMMON_VAL_DEF=0;
+
+}
+
+enum USER_EVENT_TYPE
+{
+USER_EVENT_TYPE_DEF = 0;
+	//---------------------------------------------------------------------------- 
+	//永久事件 FOREVER_EVENT_XX [40000000,49999999]
+
+	//---------------------------------------------------------------------------- 
+	
+	//----------------------------------------------------------------------------
+	//过期事件 EXPRIE_EVENT_XX [90000000-99999999]
+	//---------------------------------------------------------------------------- 
+}
+
+message user_scene_data_t//用户基本数据，场景内
+{
+	fixed64 uid = 1;
+	uint32 x = 2;
+	uint32 y = 3;
+	uint32 moveSpd = 4;
+	string name = 5;
+	repeated uint32 equip_id = 6;
+	uint32 horse = 7;
+	uint32 profession = 8;
+	uint32 level = 9;
+	uint32 sex = 10;			//性别
+}
+
+message item_t//道具
+{
+	uint32 id = 1;//id
+	uint32 cnt = 2;//数量
+}
+
+///////////////////////////////////////////////////////////////////////
+//战斗相关数据
+///////////////////////////////////////////////////////////////////////
+
+//战斗状态
+enum BATTLE_STATE
+{
+	BATTLE_STATE_DEF = 0;
+	WAIT = 1;//等待
+	COM = 2;//准备发招
+	ACT = 3;//发招
+	HURT = 4;//伤害
+}
+
+//战场参数
+enum BATTLE_FIELD_VAL{
+	BATTLE_FIELD_VAL_DEF = 0;
+	WAIT_COM_LEN = 10000;//战斗中wait->com长度
+}
+
+message battle_user_data_t//战场用户数据
+{
+	uint64 uid = 1;//用户ID
+	repeated battle_hero_data_t heros = 2;//英雄
+}
+
+
+message battle_hero_data_t//战场英雄数据
+{
+	uint32 id = 1;//英雄ID
+	uint32 hp = 2;//血
+	uint32 spd = 3;//速度
+	battle_block_data_t block_data = 4;//所占格子数据
+	repeated battle_hero_skill_t skill = 5;//英雄的技能
+	uint32 idx = 6;//英雄在战场上唯一序号
+	uint32 walk_spd = 7;//走路速度
+	uint32 anger = 10;//怒气[0,100]
+}
+
+message battle_block_data_t//战场格子数据
+{
+	uint32 row = 1;//列
+	uint32 line = 2;//行
+}
+
+message battle_hero_skill_t//战场英雄技能
+{
+	uint32 id = 1;//技能ID
+	uint32 level = 2;//技能等级
+}
+
+
+////////////////////////////////////////////////////////
+message battle_event_change_state_t//战斗事件-改变状态
+{
+	uint32 hero_idx = 1;//进攻英雄序号
+
+	BATTLE_STATE battle_state = 2;
+	uint32 select_skill_id = 3;//选择的技能
+	uint32 logic_maybe_id = 4;//是否转换成逻辑ID[0:否,1:是]
+	repeated uint32 def_hero_idx = 5;//防守英雄序号
+	
+}
+
+message battle_event_hurt_t//战斗事件-伤害
+{
+	uint32 ack_hero_idx = 3;//进攻英雄序号
+	uint32 def_hero_idx = 4;//防守英雄序号
+	uint32 skill_logic_id = 5;//使用技能逻辑id
+
+	int32 def_hero_change_hp = 6;//防守英雄HP变化
+	uint32 is_miss = 7;//是否MISS
+	uint32 is_crt = 8;//是否暴击
+	uint32 buff_id = 9;//使用buff id
+}
+
+message battle_event_buff_t//战斗事件-buff
+{
+	uint32 def_hero_idx = 1;//防守英雄序号
+	
+	uint32 add_buff_id = 5;//增加的buff id
+	uint32 del_buff_id = 6;//减少的buff id
+}
+
+message battle_event_anger_t//战斗事件-anger
+{
+	uint32 def_hero_idx = 1;//防守英雄序号
+	uint32 anger_val = 5;//怒气值
+}
+
+message battle_event_t//战斗事件
+{
+	battle_event_change_state_t change_state = 1;
+	battle_event_hurt_t hurt = 2;
+	battle_event_buff_t buff = 3;
+	battle_event_anger_t anger = 4;
+}
+
+////////////////////////////////////////////////////////
+//邮件
+message mail_t
+{
+	 uint32 idx = 1;//邮件idx
+	 uint64 uid = 2;//玩家id
+	 uint32 state = 3;//邮件状态(0:未读，1:已读)
+	 uint32 mail_id = 4;//配置表中的mail_id
+	 string attachment = 6;//邮件附件(20003,100;id,cnt)或装备串(',' 分割id,bind,xx,xx;xx,xx)
+	 uint32 time = 7;//邮件到期时间
+}
+
+//邮件状态
+enum E_MAIL_STATE
+{
+	E_MAIL_STATE_UNREAD = 0;//邮件未读
+	E_MAIL_STATE_READ = 1;//邮件已读(可删)
+	E_MAIL_STATE_READ2 = 2;//邮件已读(不可删)
+}

@@ -1,0 +1,33 @@
+syntax = "proto3";
+package mail;
+
+import "share.proto";
+	////////////////////////////////////////////////
+	//邮件[0x0500,0x05ff]
+	////////////////////////////////////////////////
+message mail_read//1,0x0501#读邮件
+{
+	 uint32 idx = 1;//邮件序号
+}
+
+message mail_read_r
+{
+}
+
+message mail_attachment//1,0x0502#领取邮件附件
+{
+	 uint32 idx = 1;//邮件序号
+}
+
+message mail_attachment_r
+{
+}
+
+message notify_mail//0,0x0503#通知邮件变化
+{
+}
+
+message notify_mail_r
+{
+	 share.mail_t mail = 1;//邮件变更
+}

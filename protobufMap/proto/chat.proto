@@ -1,0 +1,35 @@
+syntax = "proto3";
+package chat;
+
+////////////////////////////////////////////////
+//聊天[0x0300,0x03ff]
+////////////////////////////////////////////////
+//聊天类型ok
+enum E_CHAT_TYPE
+{
+	E_CHAT_TYPE_PRIVATE = 0;//私聊
+	E_CHAT_TYPE_MAP = 1;//本地图聊天
+	E_CHAT_TYPE_ALL = 2;//全服聊天
+	E_CHAT_TYPE_NOTICE = 3;//通知
+}
+
+message chat//1,0x0300#聊天
+{
+	E_CHAT_TYPE type = 1;//聊天类型
+	uint64 uid = 2;//私聊时接收消息的用户ID
+	string msg= 3;//内容
+	repeated string msg_param= 5;//内容(客户端解析内容参数)
+}
+
+message chat_r
+{
+}
+
+message notify_chat//0,0x0302#通知玩家聊天内容
+{
+	E_CHAT_TYPE type = 1;//聊天类型
+	uint64 uid = 2;//发送消息的用户ID
+	string nick = 3;//发送消息的用户昵称
+	string msg= 4;//内容
+	repeated string msg_param= 6;//内容(客户端解析内容参数)
+}

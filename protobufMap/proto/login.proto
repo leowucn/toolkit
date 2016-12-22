@@ -1,0 +1,52 @@
+syntax = "proto3";
+package login;
+
+////////////////////////////////////////////////
+//登录消息,[0x0100,0x01ff]
+////////////////////////////////////////////////
+
+//登陆消息范围,用于服务器判定
+enum LOGIN_CMD_VAL
+{
+	DEF=0;
+	MIN = 0x0100;//登录消息最小值
+	MAX = 0x01ff;//登录消息最大值
+}
+
+message login//1,0x01f1#登录
+{
+	uint32 platform = 1;//登陆类型0:内部测试
+	string account = 2; //账号
+	string data = 3;//包含平台相关数据
+}
+
+message login_norole_r//0,0x01f2#登陆返回没有用户
+{
+	string nick = 1;//随机昵称
+}
+
+message login_role_r//0,0x01f3#登陆回基本信息
+{
+	fixed64 uid = 1;	//id
+	string nick = 2;		//角色昵称
+	uint32 map_id = 3;		//所在地图id
+	uint32 level = 4;		//等级
+	uint32 sex = 5;			//性别
+	uint32 profession = 6;	//职业
+}
+
+message create_role//1,0x01f4#创建角色
+{
+	string nick = 1;
+	uint32 sex = 2;
+}
+
+message get_rand_nick//1,0x01f5#获取随机昵称
+{
+	uint32 sex = 1;
+}
+message get_rand_nick_r//返回随机昵称
+{
+	string nick = 1;
+}
+
