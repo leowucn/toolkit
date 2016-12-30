@@ -27,11 +27,11 @@ def checkPath(path):
             if ~ok:
                 return path + '\\'
             return path
-        else:              #unix or linux
-            ok = path.endswith('/')
-            if ~ok:
-                return path + '/'
-            return path
+        #unix or linux
+        ok = path.endswith('/')
+        if ~ok:
+            return path + '/'
+        return path
 
 
 
