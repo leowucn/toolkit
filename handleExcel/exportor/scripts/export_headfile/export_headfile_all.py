@@ -17,8 +17,20 @@ CPP_DIR=""
 def initPath():
 	global XLS_DIR
 	global CPP_DIR
-	XLS_DIR = sys.argv[1]
-	CPP_DIR = sys.argv[2]
+	XLS_DIR = checkPath(sys.argv[1])
+	CPP_DIR = checkPath(sys.argv[2])
+
+def checkPath(path):
+        if os.name == 'nt': #windows os
+            ok = path.endswith('\\')
+            if ~ok:
+                return path + '\\'
+            return path
+        else:              #unix or linux
+            ok = path.endswith('/')
+            if ~ok:
+                return path + '/'
+            return path
 
 def refreshFolder(directory):
 	if os.path.exists(directory):
@@ -162,9 +174,10 @@ namespace '''
 	def pause(self):
 		raw_input_A = raw_input("Generate successfully! Press any key to exit!")
 		
-initPath()
-refreshFolder(CPP_DIR)
-
-generater = GenerateCppFromXls()
-generater.tackleEveryFile()
-#generater.pause()
+if __name__ == "__main__":
+    print '--------------Convert excel to header file---------------'
+    initPath()
+    refreshFolder(CPP_DIR)
+    generater = GenerateCppFromXls()
+    generater.tackleEveryFile()
+    #generater.pause()

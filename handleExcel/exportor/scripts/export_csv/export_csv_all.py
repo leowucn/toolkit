@@ -15,14 +15,26 @@ CSV_DIR=""
 def initPath():
 	global XLS_DIR
 	global CSV_DIR
-	XLS_DIR = sys.argv[1]
-	CSV_DIR = sys.argv[2]
+	XLS_DIR = checkPath(sys.argv[1])
+	CSV_DIR = checkPath(sys.argv[2])
+
+def checkPath(path):
+        if os.name == 'nt': #windows os
+            ok = path.endswith('\\')
+            if ~ok:
+                return path + '\\'
+            return path
+        else:              #unix or linux
+            ok = path.endswith('/')
+            if ~ok:
+                return path + '/'
+            return path
 
 def refreshFolder(directory):
 	if os.path.exists(directory):
 		shutil.rmtree(directory)
-	os.makedirs(directory)
-	
+	os.makedirs(directory)	
+
 class ConvertExcelToCsv:
 	def ConvertValue(self, lst, nThRow):
 		ret=[]
@@ -68,8 +80,8 @@ class ConvertExcelToCsv:
 				d[rawRow[i]] = 0
 		
 	def csv_from_excel(self, excel_file, ignore_line, out_path):
+		print excel_file
 		src_file= XLS_DIR + excel_file # + ".xls"
-		print src_file
 		workbook = xlrd.open_workbook(src_file)
 		worksheet = workbook.sheet_by_index(0)
 		row1 = self.ConvertValue(worksheet.row_values(0), 0)
@@ -177,15 +189,16 @@ class ConvertExcelToCsv:
 		raw_input_A = raw_input("Generate successfully! Press any key to exit!")
  
 if __name__ == "__main__":
-	IGNORE_LINE=3  # these lines will be ignored
-	initPath()
-	refreshFolder(CSV_DIR)
+    print '--------------Convert excel to csv---------------'
+    IGNORE_LINE=3  # these lines will be ignored
+    initPath()
+    refreshFolder(CSV_DIR)
 	
-	convert = ConvertExcelToCsv()
-	for filename in os.listdir(XLS_DIR):
-		#csv_from_excel(unicode(filename, 'gbk'), unicode(outputName, 'gbk'), IGNORE_LINE, CSV_DIR)
-		if ((filename[-3:] != 'xls') and (filename[-4:] != 'xlsx')) or (filename[0] == '~'):
-			continue
-		convert.csv_from_excel(filename, IGNORE_LINE, CSV_DIR)
-	#pause()
+    convert = ConvertExcelToCsv()
+    for filename in os.listdir(XLS_DIR):
+	#csv_from_excel(unicode(filename, 'gbk'), unicode(outputName, 'gbk'), IGNORE_LINE, CSV_DIR)
+	if ((filename[-3:] != 'xls') and (filename[-4:] != 'xlsx')) or (filename[0] == '~'):
+	    continue
+	convert.csv_from_excel(filename, IGNORE_LINE, CSV_DIR)
+    #pause()
 
