@@ -16,8 +16,21 @@ AS_DIR=""
 def initPath():
 	global XLS_DIR
 	global AS_DIR
-	XLS_DIR = sys.argv[1]
-	AS_DIR = sys.argv[2]
+	XLS_DIR = checkPath(sys.argv[1])
+	AS_DIR = checkPath(sys.argv[2])
+
+def checkPath(path):
+        if os.name == 'nt': #windows os
+            ok = path.endswith('\\')
+            if ~ok:
+                return path + '\\'
+            return path
+        else:              #unix or linux
+            ok = path.endswith('/')
+            if ~ok:
+                return path + '/'
+            return path
+
 
 def refreshFolder(directory):
 	if os.path.exists(directory):
@@ -197,9 +210,11 @@ class GenerateAsFromDat:
 		return nameStr
 	def pause(self):
 		raw_input_A = raw_input("Generate successfully! Press any key to exit!")
-		
-initPath()
-refreshFolder(AS_DIR)
-generater = GenerateAsFromDat()
-generater.tackleEveryFile()
-#generater.pause()
+
+if __name__ == "__main__":
+    print '--------------Convert excel to as---------------'
+    initPath()
+    refreshFolder(AS_DIR)
+    generater = GenerateAsFromDat()
+    generater.tackleEveryFile()
+    #generater.pause()

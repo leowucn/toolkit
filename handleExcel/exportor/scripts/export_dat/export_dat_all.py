@@ -18,8 +18,22 @@ DAT_DIR=""
 def initPath():
 	global XLS_DIR
 	global DAT_DIR
-	XLS_DIR = sys.argv[1]
-	DAT_DIR = sys.argv[2]
+	XLS_DIR = checkPath(sys.argv[1])
+	DAT_DIR = checkPath(sys.argv[2])
+
+def checkPath(path):
+        if os.name == 'nt': #windows os
+            ok = path.endswith('\\')
+            if ~ok:
+                return path + '\\'
+            return path
+        else:              #unix or linux
+            ok = path.endswith('/')
+            if ~ok:
+                return path + '/'
+            return path
+
+
 
 def refreshFolder(directory):
 	if os.path.exists(directory):
@@ -28,8 +42,8 @@ def refreshFolder(directory):
 
 class Generator:
 	def GenDatFile(self, excel_file):
+		print excel_file
 		src_file= XLS_DIR + excel_file # + ".xls"
-		print src_file
 		workbook = xlrd.open_workbook(src_file)
 		worksheet = workbook.sheet_by_index(0)
 		row1 = self.ConvertValue(worksheet.row_values(0))
@@ -374,7 +388,7 @@ def main():
 	#generator.pause()
 		
 if __name__ == "__main__":
-	initPath()
-	refreshFolder(DAT_DIR)
-	
-	main()
+    print '--------------Convert excel to dat---------------'
+    initPath()
+    refreshFolder(DAT_DIR)
+    main()
