@@ -6,6 +6,8 @@ from Foundation import *
 import subprocess
 from utility import *
 
+imageLocationPrefix = "/Users/leo/Pictures/"
+
 class BingImageInfo(object):
     def __init__(self):
         self.jsonUrl = "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"
@@ -25,10 +27,10 @@ class EnjoyBing(BingImageInfo):
     def __init__(self):
         super(EnjoyBing, self).__init__() #super() method is used for access parent class or sibling class.An alternatvie way is "BingImageInfo.__init__()"
         imageUrl = self.getImageUrl()
-        bingImagesLocation = "/Users/leowu/Pictures/BingImages/"
+        imageLocationPrefix = "/Users/leo/Pictures/"
         imageName = imageUrl.rsplit('/', 1)[-1]
-        urllib.urlretrieve(imageUrl, bingImagesLocation + imageName)
-        self.imagePath = bingImagesLocation + imageName
+        urllib.urlretrieve(imageUrl, imageLocationPrefix + imageName)
+        self.imagePath = imageLocationPrefix + imageName
     def setWallpaper(self):
         #/Users/leowu/Pictures/BingImages/1.jpg
         applescriptForSetWallpaper = """tell application "Finder"
