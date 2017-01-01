@@ -48,7 +48,7 @@ class Check:
 				time.sleep(1000)
 				raise Exception(errStr)
 		elif typename == "string" or typename == "intarray" or typename == "intarray2" or typename == "bytearray":
-			if writeValue.IsNullStr(data):
+			if writeValue.is_null_str(data):
 				#print typename, "is none"
 				return ""	
 			if isinstance(data, unicode):
@@ -65,7 +65,7 @@ class Check:
 			return contentList
 		elif self.isSplitCase(typename):
 			typeList = re.split(r'[;]', typename)
-			#print "typeList = ", typeList
+			#print "type_list = ", type_list
 			contentList = re.split(r'[_]', str(data))
 			#print "contentList = ", contentList
 			originalContentLength = len(contentList)

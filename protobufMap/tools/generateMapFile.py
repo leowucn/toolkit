@@ -135,6 +135,6 @@ class ComposeMapFile:
 	
 
 initPath()
-#refreshFolder(DEST_DIR)
+#refresh_folder(DEST_DIR)
 compose = ComposeMapFile()
 compose.tackleFiles()

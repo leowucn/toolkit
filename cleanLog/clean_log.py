@@ -3,6 +3,9 @@ import os
 import shutil
 
 
+log_dir_name = 'log'
+
+
 def refresh_folder(directory):
 	if os.path.exists(directory):
 		shutil.rmtree(directory)
@@ -14,5 +17,5 @@ absolute_path = os.getcwd()
 
 for dirName, subdirList, fileList in os.walk(root_dir):
 	if len(dirName) > 3:
-		if dirName[-3:] == 'log':
+		if dirName[-3:] == log_dir_name:
 			refresh_folder(os.path.join(absolute_path, dirName[2:]))

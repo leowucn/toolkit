@@ -91,7 +91,7 @@ func writeWordsToFile(words *WordsList) {
 	num := 0
 	nextPosition := 0
 	for word, _ := range words.words {
-		disbuf.WriteString(word)
+		disbuf.write_string(word)
 		blankLength := 20 - len(word)
 		if blankLength <= 0 {
 			blankLength = 5
@@ -100,12 +100,12 @@ func writeWordsToFile(words *WordsList) {
 			nextPosition += 20
 		}
 		for i := 0; i < blankLength; i++ {
-			disbuf.WriteString(" ")
+			disbuf.write_string(" ")
 		}
 
 		num++
 		if num%8 == 0 {
-			disbuf.WriteString("\r\n")
+			disbuf.write_string("\r\n")
 			nextPosition = 0
 		}
 		if err := disbuf.Flush(); err != nil {

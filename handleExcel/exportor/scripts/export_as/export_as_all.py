@@ -1,80 +1,83 @@
 # encoding=utf8
 import os
-import struct
 import sys
-import json
-import string
-import ParseXls
+import parse_xls
 import shutil
 
-reload(sys)  
-sys.setdefaultencoding('utf8')
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-XLS_DIR=""
-AS_DIR=""
+XLS_DIR = ""
+AS_DIR = ""
 
-def initPath():
+def init_path():
 	global XLS_DIR
 	global AS_DIR
-	XLS_DIR = checkPath(sys.argv[1])
-	AS_DIR = checkPath(sys.argv[2])
-
-def checkPath(path):
-        if os.name == 'nt': #windows os
-            ok = path.endswith('\\')
-            if ~ok:
-                return path + '\\'
-            return path
-        #unix or linux
-        ok = path.endswith('/')
-        if ~ok:
-            return path + '/'
-        return path
+	XLS_DIR = check_path(sys.argv[1])
+	AS_DIR = check_path(sys.argv[2])
 
 
-def refreshFolder(directory):
+def check_path(path):
+		# windows os
+		if os.name == 'nt':
+			ok = path.endswith('\\')
+			if ~ok:
+				return path + '\\'
+			return path
+		# unix or linux
+		ok = path.endswith('/')
+		if ~ok:
+			return path + '/'
+		return path
+
+
+def refresh_folder(directory):
 	if os.path.exists(directory):
 		shutil.rmtree(directory)
 	os.makedirs(directory)
-	
+
+
 class GenerateAsFromDat:
-	def tackleEveryFile(self):
+	def __init__(self):
+		pass
+
+	def tackle_every_file(self):
 		for filename in os.listdir(XLS_DIR):
 			if ((filename[-3:] != 'xls') and (filename[-4:] != 'xlsx')) or (filename[0] == '~'):
 				continue
 			self.generate(filename)
 	
-	def generate(self, xlsFileName):
-		print xlsFileName
-		xlsFilePathName = XLS_DIR + xlsFileName
-		parseXls = ParseXls.ParseXls(xlsFilePathName, AS_DIR)	
+	def generate(self, xls_file_name):
+		print xls_file_name
+		xls_file_path_name = XLS_DIR + xls_file_name
+		parse_xls_f = parse_xls.ParseXls(xls_file_path_name, AS_DIR)
 		
-		lst = [word[0].upper() + word[1:] for word in parseXls.staitcFileName.split()]
-		parseXls.staitcFileName = ''.join(lst)
-		parseXls.staitcFileName = self.beautifyFormation(parseXls.staitcFileName)
-		#print parseXls.staitcFileName
-		staticdataLiteral = ''
+		lst = [word[0].upper() + word[1:] for word in parse_xls_f.staitc_file_name.split()]
+		parse_xls_f.staitc_file_name = ''.join(lst)
+		parse_xls_f.staitc_file_name = self.beautify_formation(parse_xls_f.staitc_file_name)
+		#print parse_xls_f.staitc_file_name
+		staticdata_literal = ''
 		if os.name == 'nt':
 			#windows system
-			staticdataLiteral = '\\staticdata\\'
+			staticdata_literal = '\\staticdata\\'
 		else:
 			#unix or linux system
-			staticdataLiteral = '/staticdata/'
+			staticdata_literal = '/staticdata/'
 
-		if not os.path.exists(AS_DIR + staticdataLiteral):
-			os.makedirs(AS_DIR + staticdataLiteral)
+		if not os.path.exists(AS_DIR + staticdata_literal):
+			os.makedirs(AS_DIR + staticdata_literal)
 			
-		asFilePathName = AS_DIR + staticdataLiteral  + parseXls.staitcFileName + ".as"
-		if os.path.isfile(asFilePathName):
-			os.remove(asFilePathName)
-		asFile = file(asFilePathName, "wb")
+		as_file_path_name = AS_DIR + staticdata_literal + parse_xls_f.staitc_file_name + ".as"
+		if os.path.isfile(as_file_path_name):
+			os.remove(as_file_path_name)
+		as_file = file(as_file_path_name, "wb")
 
-		classStr = "public class"
-		extendsStr = "StaticInfoBase"
-		if (parseXls.staitcFileName == "PlayerInfo"):
-			extendsStr = "StaticInfoBase"
+		class_str = "public class"
+		extends_str = "StaticInfoBase"
+		if parse_xls_f.staitc_file_name == "PlayerInfo":
+			extends_str = "StaticInfoBase"
 
-		contentStr = '''/*
+		content_str = '''/*
 *
 * Copyright 2016
 * All rights reserved.
@@ -83,138 +86,138 @@ class GenerateAsFromDat:
 *
 */
 '''
-		contentStr += "package staticdata\n{\n" + "\t" + \
+		content_str += "package staticdata\n{\n" + "\t" + \
 				"import flash.utils.ByteArray;\n\t"  + "import staticdata.define.*" + "\n\n"
-		contentStr += "\t" + classStr + " " + parseXls.staitcFileName + " extends " + extendsStr + "\n\t{\n"
+		content_str += "\t" + class_str + " " + parse_xls_f.staitc_file_name + " extends " + extends_str + "\n\t{\n"
 		
-		colSize = parseXls.getColSize()
-		for i in range(0, colSize):
-			typeStr = parseXls.getType(i)
-			nameStr = parseXls.getName(i)
-			descStr = parseXls.getDesc(i).replace('\n','')
+		col_size = parse_xls_f.get_col_size()
+		for i in range(0, col_size):
+			type_str = parse_xls_f.get_type(i)
+			name_str = parse_xls_f.get_name(i)
+			desc_str = parse_xls_f.get_desc(i).replace('\n', '')
 			
-			if typeStr.find('array~') == 0:
+			if type_str.find('array~') == 0:
 				continue
-			typeStr = self.getRepairedType(typeStr.lower())
+			type_str = self.get_repaired_type(type_str.lower())
 	
-			contentStr += "\t\t" + "public var " + self.beautifyFormation(nameStr) + ":" + typeStr + ";" + "\t\t//" + descStr + "\n"
+			content_str += "\t\t" + "public var " + self.beautify_formation(name_str) + ":" + type_str + ";" + "\t\t//" + desc_str + "\n"
 
-		for relativeVariableName, relativeClassName in parseXls.mapClass.iteritems():  #for python 2.x
-			contentStr += "\t\tpublic var " + self.beautifyFormation(relativeVariableName) + ":Vector.<" +  self.beautifyFormation(relativeClassName) + ">;\t\n"
+		for relative_variable_name, relative_class_name in parse_xls_f.map_class.iteritems():
+			content_str += "\t\tpublic var " + self.beautify_formation(relative_variable_name) + ":Vector.<" + self.beautify_formation(relative_class_name) + ">;\t\n"
 			
 			
-		contentStr += "\n\t\t" + "public function " + parseXls.staitcFileName + "(data:ByteArray)\n\t\t{\n" + \
+		content_str += "\n\t\t" + "public function " + parse_xls_f.staitc_file_name + "(data:ByteArray)\n\t\t{\n" + \
 				"\t\t\t" + "super(data);\n"
 
-		readStr = "data.readUTF();"
-		for i in range(0, colSize):
-			readStr = "data.readUTF();"
-			typeStr = parseXls.getType(i)
-			nameStr = parseXls.getName(i)
-			descStr = parseXls.getDesc(i)
+		read_str = "data.readUTF();"
+		for i in range(0, col_size):
+			read_str = "data.readUTF();"
+			type_str = parse_xls_f.get_type(i).encode('utf-8')
+			name_str = parse_xls_f.get_name(i).encode('utf-8')
+			desc_str = parse_xls_f.get_desc(i).encode('utf-8')
 
-			readStr = self.getResolveFunction(typeStr.lower())
-			if typeStr.find('array~') == 0:
-				className = self.extractClassName(typeStr)
-				for relativeVariableName, relativeClassName in parseXls.mapClass.iteritems():  #for python 2.x
-					if nameStr == relativeVariableName:
-						classInfo = self.getSpecificClassInfo(parseXls, relativeClassName)
-						contentStr += "\t\t\t" + self.beautifyFormation(relativeVariableName) + " = " + "new Vector.<" + classInfo.className + ">();\n"
-						contentStr += "\t\t\tvar l:int = data.readUnsignedByte();\n"
-						iString = ''
-						if contentStr.find("var i:int = 0;") >=0:
-							iString = 'i = 0; '
+			read_str = self.get_resolve_function(type_str.lower())
+			if type_str.find('array~') == 0:
+				class_name = self.extract_class_name(type_str)
+				for relative_variable_name, relative_class_name in parse_xls_f.map_class.iteritems():  #for python 2.x
+					if name_str == relative_variable_name:
+						class_info = self.get_specific_class_info(parse_xls_f, relative_class_name)
+						content_str += "\t\t\t" + self.beautify_formation(relative_variable_name) + " = " + "new Vector.<" + class_info.className + ">();\n"
+						content_str += "\t\t\tvar l:int = data.readUnsignedByte();\n"
+						i_string = ''
+						if content_str.find("var i:int = 0;") >= 0:
+							i_string = 'i = 0; '
 						else: 
-							iString = "var i:int = 0; "
-						contentStr += "\t\t\tfor(" + iString +  "i < l; i++)\n\t\t\t{\n"
-						tempClassName = "each" + classInfo.className
-						contentStr += "\t\t\t\tvar " + tempClassName + " : " + classInfo.className + " = new " + classInfo.className + "();\n"	
-						for i in range(len(classInfo.variablesList)):
-							typeList = classInfo.typeList
-							readStr = self.getResolveFunction(typeList[i].lower())
-							contentStr += "\t\t\t\t" + tempClassName + '.' + classInfo.variablesList[i] + " = " + readStr + "\n"
-						contentStr += "\n\t\t\t\t" + self.beautifyFormation(relativeVariableName) + ".push(" + tempClassName + ");\n\t\t\t}\n\n"
-			elif typeStr == 'intarray2':
-				contentStr += '''
+							i_string = "var i:int = 0; "
+						content_str += "\t\t\tfor(" + i_string + "i < l; i++)\n\t\t\t{\n"
+						temp_class_name = "each" + class_info.className
+						content_str += "\t\t\t\tvar " + temp_class_name + " : " + class_info.className + " = new " + class_info.className + "();\n"
+						for i in range(len(class_info.variablesList)):
+							type_list = class_info.typeList
+							read_str = self.get_resolve_function(type_list[i].lower())
+							content_str += "\t\t\t\t" + temp_class_name + '.' + class_info.variablesList[i] + " = " + read_str + "\n"
+						content_str += "\n\t\t\t\t" + self.beautify_formation(relative_variable_name) + ".push(" + temp_class_name + ");\n\t\t\t}\n\n"
+			elif type_str == 'intarray2':
+				content_str += '''
 			var array:Array = data.readUTF().split(";");
 			for (var i:int = 0; i < array.length; i++)
 			{
 				'''
-				contentStr += self.beautifyFormation(nameStr)
-				contentStr +=".push(array[i].split(\"_\"));\n\t\t\t}\n\n"
-			elif typeStr == 'intarray' or typeStr == 'bytearray':
-				contentStr += '\t\t\t' + self.beautifyFormation(nameStr) + ' = ' + readStr + '\n'
+				content_str += self.beautify_formation(name_str)
+				content_str +=".push(array[i].split(\"_\"));\n\t\t\t}\n\n"
+			elif type_str == 'intarray' or type_str == 'bytearray':
+				content_str += '\t\t\t' + self.beautify_formation(name_str) + ' = ' + read_str + '\n'
 			else:
-				contentStr += "\t\t\t" + self.beautifyFormation(nameStr) + " = " + readStr + "\n"
+				content_str += "\t\t\t" + self.beautify_formation(name_str) + " = " + read_str + "\n"
 				
-		contentStr = contentStr.strip('\n')
-		contentStr += "\t\t\n\t\t}\n" + "\t}\n" + "}\n"
-		asFile.write(contentStr)
-		asFile.close()
+		content_str = content_str.strip('\n')
+		content_str += "\t\t\n\t\t}\n" + "\t}\n" + "}\n"
+		as_file.write(content_str)
+		as_file.close()
 		
-	def extractClassName(self, rawString):
-		classNamePositin = rawString.find('~') + 1
-		className = []
-		for i in range(classNamePositin, len(rawString)):
-			if (ord(rawString[i]) == 95) or ((ord(rawString[i]) >= 48) and (ord(rawString[i]) <=57)) or ((ord(rawString[i]) >= 65) and (ord(rawString[i]) <=90))  or ((ord(rawString[i]) >= 97) and (ord(rawString[i]) <=122)):
-				className.append(rawString[i])
+	def extract_class_name(self, raw_string):
+		class_name_positin = raw_string.find('~') + 1
+		class_name = []
+		for i in range(class_name_positin, len(raw_string)):
+			if (ord(raw_string[i]) == 95) or ((ord(raw_string[i]) >= 48) and (ord(raw_string[i]) <=57)) or ((ord(raw_string[i]) >= 65) and (ord(raw_string[i]) <=90))  or ((ord(raw_string[i]) >= 97) and (ord(raw_string[i]) <=122)):
+				class_name.append(raw_string[i])
 			else:
 				break
-		lst = [word[0].upper() + word[1:] for word in ''.join(className).split()]
-		stringClassName = " ".join(lst)
-		stringClassName = self.beautifyFormation(stringClassName)		
-		return stringClassName
+		lst = [word[0].upper() + word[1:] for word in ''.join(class_name).split()]
+		string_class_name = " ".join(lst)
+		string_class_name = self.beautify_formation(string_class_name)
+		return string_class_name
 		
-	def getRepairedType(self, rawString):
-		if (rawString == "byte"):
+	def get_repaired_type(self, raw_string):
+		if raw_string == "byte":
 			return "int"
-		elif (rawString == "int"):
+		elif raw_string == "int":
 			return "int"
-		elif (rawString == "string"):
+		elif raw_string == "string":
 			return "String"
-		elif (rawString == "short"):
+		elif raw_string == "short":
 			return "int"
-		elif (rawString == "float"):
+		elif raw_string == "float":
 			return "Number"
-		elif (rawString == "intarray") or (rawString == "bytearray"):
+		elif (raw_string == "intarray") or (raw_string == "bytearray"):
 			return "Array"
-		elif (rawString == "intarray2") :
+		elif raw_string == "intarray2":
 			return "Array = []"
-	def getResolveFunction(self, rawString):
-		if (rawString == "int"):
+
+	def get_resolve_function(self, raw_string):
+		if raw_string == "int":
 			return "data.readInt();"
-		elif (rawString == "byte"):
+		elif raw_string == "byte":
 			return "data.readUnsignedByte();"
-		elif (rawString == "short"):
+		elif raw_string == "short":
 			return "data.readUnsignedShort();"
-		elif (rawString == "string"):
+		elif raw_string == "string":
 			return "data.readUTF();"
-		elif (rawString == "float"):
+		elif raw_string == "float":
 			return "data.readFloat();"
-		elif (rawString == "intarray") or (rawString == "intarray2") or (rawString == "bytearray"):
+		elif (raw_string == "intarray") or (raw_string == "intarray2") or (raw_string == "bytearray"):
 			return "data.readUTF().split(" + "\"_\"" + ");"
-	def getSpecificClassInfo(self, parseXls, className):
-		for classInfo in parseXls.classList:
-			if classInfo.className == className:
+
+	def get_specific_class_info(self, parse_xls, class_name):
+		for classInfo in parse_xls.classList:
+			if classInfo.className == class_name:
 				return classInfo
 		return ''
 		
-	def beautifyFormation(self, nameStr):
+	def beautify_formation(self, name_str):
 		indices = set([])
-		for i,c in enumerate(nameStr):
-			if "_"==c: indices.add(i+1)
-		if (len(indices) == 0):
-			return nameStr
-		nameStr = "".join(c.upper() if i in indices else c for i, c in enumerate(nameStr))
-		nameStr = nameStr.replace('_','')
-		return nameStr
-	def pause(self):
-		raw_input_A = raw_input("Generate successfully! Press any key to exit!")
+		for i, c in enumerate(name_str):
+			if "_" == c:
+				indices.add(i+1)
+		if len(indices) == 0:
+			return name_str
+		name_str = "".join(c.upper() if i in indices else c for i, c in enumerate(name_str))
+		name_str = name_str.replace('_', '')
+		return name_str
 
 if __name__ == "__main__":
-    print '--------------Convert excel to as---------------'
-    initPath()
-    refreshFolder(AS_DIR)
-    generater = GenerateAsFromDat()
-    generater.tackleEveryFile()
-    #generater.pause()
+	print '--------------Convert excel to as---------------'
+	init_path()
+	refresh_folder(AS_DIR)
+	generater = GenerateAsFromDat()
+	generater.tackle_every_file()
