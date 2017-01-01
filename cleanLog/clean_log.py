@@ -2,16 +2,17 @@
 import os
 import shutil
 
-def refreshFolder(directory):
+
+def refresh_folder(directory):
 	if os.path.exists(directory):
 		shutil.rmtree(directory)
 	os.makedirs(directory)
 
 # Set the directory you want to start from
-rootDir = '.'
+root_dir = '.'
 absolute_path = os.getcwd()
 
-for dirName, subdirList, fileList in os.walk(rootDir):
+for dirName, subdirList, fileList in os.walk(root_dir):
 	if len(dirName) > 3:
 		if dirName[-3:] == 'log':
-			refreshFolder(os.path.join(absolute_path, dirName[2:]))
+			refresh_folder(os.path.join(absolute_path, dirName[2:]))
