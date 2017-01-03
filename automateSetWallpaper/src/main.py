@@ -30,7 +30,7 @@ if __name__ == "__main__":
             enjoy.pop_up_story_window()
             break
         time.sleep(60)
-        try_times += try_times + 1
+        try_times += 1
         if try_times == 10:
             break
 
