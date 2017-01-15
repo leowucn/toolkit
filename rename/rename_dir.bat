@@ -1,0 +1,1 @@
+for /D %%f in (F:\test\t\*) do rename "%%f" "3%%~nxf"
