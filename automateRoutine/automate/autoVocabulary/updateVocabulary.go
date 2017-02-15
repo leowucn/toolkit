@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	HisFilePath     string     = fmt.Sprintf("%s", "/Users/leowu/.goldendict/history")
-	DisFilePath     string     = fmt.Sprintf("%s", "/Users/leowu/Documents/wordList")
+	HisFilePath     string     = fmt.Sprintf("%s", "/Users/leo/.goldendict/history")
+	DisFilePath     string     = fmt.Sprintf("%s", "/Users/leo/Documents/wordList")
 	DictionaryPath  string     = fmt.Sprintf("%s", "./automate/autoVocabulary/dictionary")
 	DictionaryWords *WordsList = new(WordsList)
 )

@@ -10,6 +10,8 @@ All tools are in the directory of 'exporter'.
 
 Files in the directory of 'as/staticdata' are generated action scripts.
 
-Files in the directory of 'cpp' are c++ head files.Files in the directory of 'csv' are csv files.
+Files in the directory of 'cpp' are c++ head files.
+
+Files in the directory of 'csv' are csv files.
 
 Files in the directory of 'dat' are data files which were extract from excel files.
