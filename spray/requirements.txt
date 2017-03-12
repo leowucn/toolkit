@@ -1,0 +1,5 @@
+pyperclip
+urllib
+mechanize
+bs4
+requests
